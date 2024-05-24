@@ -5,6 +5,7 @@ import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { Error, Form, Input, Logo, Switcher, Title, Wrapper } from "../components/auth-components";
+import GithubButton from "../components/github-btn";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -61,5 +62,6 @@ export default function Login() {
         <Switcher>
             계정이 없으신가요? <Link to="/create-account">회원가입 &rarr;</Link>
         </Switcher>
+        <GithubButton/>
     </Wrapper>;
 }
