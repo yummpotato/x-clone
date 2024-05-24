@@ -9,11 +9,17 @@ import reset from "styled-reset";
 import { useEffect, useState } from "react";
 import LoadingScreen from "./components/loading-screen";
 import { auth } from "./firebase";
+import ProtectedRoute from "./components/protected-route";
+import "./App.css";
 
 const router = createBrowserRouter([ //배열을 라우터에 전달
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [ // Layout의 요소!
       {
         path: "", // "" == "/" -> 그래서 루트 링크에 들어가면 Outlet으로 Home이 렌더링되는 것임!
@@ -65,7 +71,7 @@ function App() {
     init();
   }, []);
   return (
-    <Wrapper>
+    <Wrapper className="body">
       <GlobalStyles />
       {isLoading ? <LoadingScreen/> : <RouterProvider router={router} />}
     </Wrapper>

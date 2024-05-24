@@ -1,63 +1,13 @@
 import { useState } from "react";
-import styled, {keyframes} from "styled-components";
-import potatoImage from "/Users/parkhyejeong/Desktop/twitter_clone/twitter/public/potato.png";
-
-// 회전 애니메이션 정의
-const rotate = keyframes`
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-`;
-
-const Wrapper = styled.div`
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 26.25rem;
-    padding: 3.125rem 0rem;
-`;
-const Logo = styled.img`
-    width: 300px;
-    height: auto;
-    animation: ${rotate} 10s linear infinite; // 애니메이션 추가
-`;
-const Title = styled.h1`
-    font-size: 42px;
-`;
-const Form = styled.form`
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-`;
-const Input = styled.input`
-    padding: 10px 20px;
-    border-radius: 50px;
-    border: none;
-    width: 100%;
-    font-size: 16px;
-    font-weight: 600;
-    font-family: sans-serif; // 브라우저 기본 폰트로 설정
-
-    // type이 submit이라면 cursor를 pointer로 한다는 코드
-    &[type="submit"]{
-        cursor: pointer;
-        &:hover {
-            opacity: 0.8; // 투명도 설정
-        }
-    }
-`;
-const Error = styled.span`
-    font-weight: 600;
-    color: tomato;
-`;
+import potatoImage from "/Users/parkhyejeong/Desktop/twitter-clone/x-clone/public/potato.png";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
+import { Form, Error, Input, Logo, Switcher, Title, Wrapper } from "../components/auth-components";
 
 export default function CreateAccount() {
+    const navigate = useNavigate();
     const [isLoading, setLoading] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -77,13 +27,34 @@ export default function CreateAccount() {
         }
     }
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // 화면이 새로고침되지 않도록 하는 함수
+        setError("");
+
+        if(isLoading || name === "" || email === "" || password === "") return;
 
         try {
+            setLoading(true);
+
             // 계정 생성 & 사용자 프로필 이름 설정 & 홈페이지로 리디렉션 필요
+            // 계정이 생성되면 사용자가 자동으로 로그인됨
+            const credentials = await createUserWithEmailAndPassword(auth, email, password); // createUserWithEmailAndPassword: async에서만 사용가능한 함수, 자격 증명 발급 가능
+            console.log(credentials.user);
+
+            // 사용자 프로필 update
+            await updateProfile(credentials.user, {
+                displayName: name,
+            });
+
+            // navigate to home
+            navigate("/");
         } catch(e) {
             // 오류 설정 필요
+            // 자격 증명을 발급받지 못 했을 경우 실행
+            // ex, 해당 이메일로 이미 계정이 있거나 비밀번호가 유호하지 않은 경우
+            if(e instanceof FirebaseError) {
+                setError(e.message);
+            }
         } finally {
             setLoading(false);
         }
@@ -91,7 +62,7 @@ export default function CreateAccount() {
 
     return <Wrapper>
         <Logo src={potatoImage} alt="Logo" />
-        <Title>Log into 밤𝕏감자</Title>
+        <Title>Join 감자' 𝕏</Title>
         <Form onSubmit={onSubmit}>
             <Input onChange={onChange} name="name" value={name} placeholder="Name" type="text" required/> {/* name */} {/* required: 필수로 입력해야 할 때 사용 */}
             <Input onChange={onChange} name="email" value={email} placeholder="Email" type="email" required/> {/* email */}
@@ -99,5 +70,8 @@ export default function CreateAccount() {
             <Input onChange={onChange} type="submit" value={isLoading ? "Loading..." : "Create Account"}/> {/* login btn */}
         </Form>
         {error != "" ? <Error>{error}</Error> : null}
+        <Switcher>
+            이미 계정이 있으신가요? <Link to="/login">로그인 &rarr;</Link>
+        </Switcher>
     </Wrapper>;
 }
