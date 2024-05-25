@@ -56,7 +56,7 @@ export default function Login() {
         <Form onSubmit={onSubmit}>
             <Input onChange={onChange} name="email" value={email} placeholder="Email" type="email" required/> {/* email */}
             <Input onChange={onChange} name="password" value={password} placeholder="Password" type="password" required/> {/* password */}
-            <Input onChange={onChange} type="submit" value={isLoading ? "Loading..." : "Login"}/> {/* login btn */}
+            <Input onChange={onChange} type="submit" value={isLoading ? "Loading..." : "Log In"}/> {/* login btn */}
         </Form>
         {error != "" ? <Error>{error}</Error> : null}
         <Switcher>

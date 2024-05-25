@@ -44,6 +44,8 @@ export const Input = styled.input`
 
     // type이 submit이라면 cursor를 pointer로 한다는 코드
     &[type="submit"]{
+        background-color: #1d9bf0;
+        color: white;
         cursor: pointer;
         &:hover {
             opacity: 0.8; // 투명도 설정
