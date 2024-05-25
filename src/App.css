@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'JalnanFont';
+    src: url('./fonts/dongle.ttf') format('truetype');
+}
+
+body {
+    font-family: 'JalnanFont', sans-serif;
+    overflow-y: scroll;
+}
