@@ -72,7 +72,7 @@ export default function CreateAccount() {
         </Form>
         {error != "" ? <Error>{error}</Error> : null}
         <Switcher>
-            이미 계정이 있으신가요? <Link to="/login">로그인 &rarr;</Link>
+            이미 계정이 있으신가요? <Link to="/login">로그인</Link>
         </Switcher>
         <GithubButton/>
     </Wrapper>;
