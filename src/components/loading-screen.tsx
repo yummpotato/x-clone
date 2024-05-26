@@ -12,5 +12,5 @@ const Text = styled.span`
 `;
 
 export default function LoadingScreen() {
-    return <Wrapper><Text>Loading</Text></Wrapper>;
+    return <Wrapper><Text>Welcome to 감자' 𝕏</Text></Wrapper>;
 }

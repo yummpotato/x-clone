@@ -1,7 +1,8 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { auth, db } from "../firebase";
+import { auth, db, storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Form = styled.form`
     display: flex;
@@ -75,6 +76,15 @@ export default function PostTweetForm() {
         if(files && files.length === 1) {
             setFile(files[0]);
         }
+
+        // file의 size가 1mb 미만일 때만 업로드 가능
+        const selectedFile = files![0];
+        if (selectedFile.size <= 1024 * 1024) { // 1MB = 1024 * 1024 bytes
+            setFile(selectedFile);
+        } else {
+            alert("File size exceeds 1MB. Please choose a smaller file.");
+            setFile(null);
+        }
     }
 
     const onSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
@@ -87,17 +97,29 @@ export default function PostTweetForm() {
             setLoading(true);
 
             // new document 생성 -> 어떤 collection에 document를 생성하고 싶은지 지정해야 함.
-            await addDoc(collection(db, "tweets"), {
+            const doc = await addDoc(collection(db, "tweets"), {
                 // 넣고 싶은 data를 이곳에 쓰면 된다.
                 tweet,
                 createdAt: Date.now(),
                 username: user.displayName || "Anonymous", 
-                userId: user.uid
-            })
+                userId: user.uid,
+            });
 
-            if(tweet !== ""){
-                setTweet("");
+            if(file) {
+                // 업로드된 파일이 저장되는 폴더명과 파일명을 지정할 수 있음.
+                const locationRef = ref(storage, `tweets/${user.uid}-${user.displayName}/${doc.id}`);
+                // 파일을 어디에 저장하고 싶은지 알려주는 함수
+                const result = await uploadBytes(locationRef, file); 
+                // result의 public URL을 return하는 함수 (upload한 사진의 url)
+                const url = await getDownloadURL(result.ref);
+                // 만든 document를 update하는 함수 (doc 변수에 사진 URL을 저장하기 위해서)
+                // update할 document에 대한 참조와 update할 data 필요
+                await updateDoc(doc, { 
+                    photo: url,
+                });
             }
+            setTweet("");
+            setFile(null);
         } catch (e) {
             console.log(e);
         } finally {
@@ -106,7 +128,7 @@ export default function PostTweetForm() {
     }
     return(
         <Form onSubmit={onSubmit}>
-            <TextArea rows={5} maxLength={180} onChange={onChange} value={tweet} placeholder="무슨 일이 일어나고 있나요?"/>
+            <TextArea rows={5} maxLength={180} onChange={onChange} value={tweet} placeholder="무슨 일이 일어나고 있나요?" required/>
 
             {/* htmlFor를 AttachFileInput의 id로 설정했기에 AttachFileButton을 클릭해도 AttachFileInput의 기능을 한다. */}
             <AttachFileButton htmlFor="file">{file? "Photo Added✅" : "Add Photo📸"}</AttachFileButton> 

@@ -1,9 +1,9 @@
 @font-face {
-    font-family: 'JalnanFont';
-    src: url('./fonts/dongle.ttf') format('truetype');
+    font-family: 'NeoFont';
+    src: url('./fonts/neo.ttf') format('truetype');
 }
 
 body {
-    font-family: 'JalnanFont', sans-serif;
+    font-family: 'NeoFont', sans-serif !important;;
     overflow-y: scroll;
 }
