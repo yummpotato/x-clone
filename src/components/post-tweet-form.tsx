@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-const Form = styled.form`
+export const Form = styled.form`
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -30,7 +30,7 @@ const TextArea = styled.textarea`
         border: 3px solid #1d9bf0;
     }
 `;
-const AttachFileButton = styled.label`
+export const AttachFileButton = styled.label`
     padding: 10px 0px;
     color: #1d9bf0;
     text-align: center;
@@ -43,10 +43,10 @@ const AttachFileButton = styled.label`
         opacity: 0.9;
     }
 `;
-const AttachFileInput = styled.input`
+export const AttachFileInput = styled.input`
     display: none;
 `;
-const SubmitButton = styled.input`
+export const SubmitButton = styled.input`
     background-color: #1d9bf0;
     color: white;
     font-weight: 600;
