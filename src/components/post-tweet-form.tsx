@@ -1,5 +1,7 @@
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState } from "react";
 import styled from "styled-components";
+import { auth, db } from "../firebase";
 
 const Form = styled.form`
     display: flex;
@@ -74,8 +76,36 @@ export default function PostTweetForm() {
             setFile(files[0]);
         }
     }
+
+    const onSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const user = auth.currentUser;
+        // loading 중인지, tweet이 비었는지, tweet의 길이가 180자보다 많은지 체크
+        if(!user || isLoading || tweet === ""  || tweet.length > 180) return; // user가 login되어 있지 않은 상태라면 return;
+
+        try {
+            setLoading(true);
+
+            // new document 생성 -> 어떤 collection에 document를 생성하고 싶은지 지정해야 함.
+            await addDoc(collection(db, "tweets"), {
+                // 넣고 싶은 data를 이곳에 쓰면 된다.
+                tweet,
+                createdAt: Date.now(),
+                username: user.displayName || "Anonymous", 
+                userId: user.uid
+            })
+
+            if(tweet !== ""){
+                setTweet("");
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setLoading(false);
+        }
+    }
     return(
-        <Form>
+        <Form onSubmit={onSubmit}>
             <TextArea rows={5} maxLength={180} onChange={onChange} value={tweet} placeholder="무슨 일이 일어나고 있나요?"/>
 
             {/* htmlFor를 AttachFileInput의 id로 설정했기에 AttachFileButton을 클릭해도 AttachFileInput의 기능을 한다. */}
