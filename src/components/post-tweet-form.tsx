@@ -19,6 +19,7 @@ const TextArea = styled.textarea`
     background-color: black;
     width: 100%;
     resize: none;
+    white-space: pre-wrap;
     &::placeholder {
         font-size: 16px;
         font-family: sans-serif;
