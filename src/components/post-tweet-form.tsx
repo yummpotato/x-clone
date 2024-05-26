@@ -108,7 +108,7 @@ export default function PostTweetForm() {
 
             if(file) {
                 // 업로드된 파일이 저장되는 폴더명과 파일명을 지정할 수 있음.
-                const locationRef = ref(storage, `tweets/${user.uid}-${user.displayName}/${doc.id}`);
+                const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);
                 // 파일을 어디에 저장하고 싶은지 알려주는 함수
                 const result = await uploadBytes(locationRef, file); 
                 // result의 public URL을 return하는 함수 (upload한 사진의 url)
